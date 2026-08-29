@@ -20,7 +20,7 @@ import {
     signoutRouter
 } from './routers/index.js';
 
-import { currentUser, requireAuth } from '../common/index.js';
+import { currentUser, errorHandler, NotFoundError, requireAuth } from '../common/index.js';
 
 const app = express();
 
@@ -59,28 +59,10 @@ app.use(requireAuth, newCommentRouter);
 app.use(requireAuth, deleteCommentRouter);
 
 app.all('/{*splat}', (req: Request, res: Response, next: NextFunction) => {
-
-    const error = new Error('Not Found!') as CustomError;
-    error.status = 404;
-    next(error);
-
+    next(new NotFoundError());
 });
 
-declare global {
-    interface CustomError extends Error {
-        status?: number
-    }
-}
-
-app.use((error: CustomError, req: Request, res: Response, next: NextFunction) => {
-
-    if (error.status) {
-        return res.status(error.status).json({ message: error.message });
-    }
-
-    res.status(500).json({ message: 'Something went wrong.' });
-
-});
+app.use(errorHandler);
 
 const start = () => {
     if (!process.env.MONGO_URI) {

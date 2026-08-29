@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import Post from '../../models/post.js';
+import { BadRequestError } from '../../../common/index.js';
 
 const router = Router();
 
@@ -8,12 +9,7 @@ router.delete('/post/:id', async (req: Request, res: Response, next: NextFunctio
 
     const { id } = req.params;
 
-    if (!id) {
-        const error = new Error('Id is required') as CustomError;
-        error.status = 400;
-        return next(error);
-    }
-
+    if (!id) return next(new BadRequestError("Id is required"));
 
 
     try {
@@ -21,13 +17,11 @@ router.delete('/post/:id', async (req: Request, res: Response, next: NextFunctio
         await Post.findOneAndDelete({ _id: id });
 
     } catch (err) {
-        const error = new Error('Post delete failed') as CustomError;
-        error.status = 500;
-        return next(error);
+        return next(new Error('Post delete failed'));
     }
 
 
-    res.status(2001).send({ success: true });
+    res.status(201).send({ success: true });
 
 
 });

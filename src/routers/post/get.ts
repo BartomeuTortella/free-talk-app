@@ -15,13 +15,11 @@ router.get('/post/:id', async (req: Request, res: Response, next: NextFunction) 
         foundPost = await Post.find({ _id: id }).populate('comments');
 
     } catch (err) {
-        const error = new Error('Post find failed') as CustomError;
-        error.status = 500;
-        return next(error);
+        return next(new Error('Post find failed'));
     }
 
 
-    res.status(200).send(foundPost);
+    res.status(201).send(foundPost);
 });
 
 export { router as getPostRouter };

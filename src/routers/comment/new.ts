@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import Comment from '../../models/comment.js';
 import Post from '../../models/post.js';
+import { BadRequestError } from '../../../common/index.js';
 
 const router = Router();
 
@@ -10,17 +11,10 @@ router.post('/comment/:postId', async (req: Request, res: Response, next: NextFu
     const { userName, content } = req.body;
     const { postId } = req.params;
 
-    if (!postId) {
-        const error = new Error('Post id is required') as CustomError;
-        error.status = 400;
-        return next(error);
-    }
+    if (!postId) return next(new BadRequestError("PostId is required"));
 
-    if (!content) {
-        const error = new Error('Content is required') as CustomError;
-        error.status = 400;
-        return next(error);
-    }
+
+    if (!content) return next(new BadRequestError("Content is required"));
 
     const newComment = new Comment({ userName: userName ? userName : 'Anonymous', content });
 
