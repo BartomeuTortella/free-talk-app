@@ -17,10 +17,7 @@ router.post("/signup", async (req: Request, res: Response, next: NextFunction) =
 
     if (user) return next(new BadRequestError("Email already in use"));
 
-    const newUser = new User({
-        email,
-        password
-    });
+    const newUser = User.build({ email, password });
 
     await newUser.save();
 

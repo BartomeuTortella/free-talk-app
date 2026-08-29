@@ -6,7 +6,7 @@ declare global {
 
     interface JwtPayload {
         email: string,
-        password: string
+        userId: string
     }
 
     namespace Express {

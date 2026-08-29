@@ -19,13 +19,15 @@ router.delete('/comment/:postId/:commentId', async (req: Request, res: Response,
         return next(new Error("Comment cannot be updated"));
     }
 
-    await Post.findOneAndUpdate(
+    const post = await Post.findOneAndUpdate(
         { _id: postId },
         { $pull: { comments: commentId } },
         { new: true }
     )
 
-    res.status(201).send({ success: true });
+    if (!post) return next(new Error());
+
+    res.status(201).send(post);
 
 
 });

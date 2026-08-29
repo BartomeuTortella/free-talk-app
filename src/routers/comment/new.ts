@@ -16,7 +16,7 @@ router.post('/comment/:postId', async (req: Request, res: Response, next: NextFu
 
     if (!content) return next(new BadRequestError("Content is required"));
 
-    const newComment = new Comment({ userName: userName ? userName : 'Anonymous', content });
+    const newComment = Comment.build({ userName: userName ? userName : 'Anonymous', content });
 
     await newComment.save();
 
