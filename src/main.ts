@@ -5,6 +5,7 @@ import express from "express";
 import mongoose from 'mongoose';
 import type { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import cookieSession from 'cookie-session';
 
 import {
     newPostRouter,
@@ -12,8 +13,14 @@ import {
     updatePostRouter,
     getPostRouter,
     newCommentRouter,
-    deleteCommentRouter
-} from './routers/index.js'
+    deleteCommentRouter,
+    signinRouter,
+    signupRouter,
+    currentUserRouter,
+    signoutRouter
+} from './routers/index.js';
+
+import { currentUser, requireAuth } from '../common/index.js';
 
 const app = express();
 
@@ -26,18 +33,30 @@ app.use(
     )
 );
 
+app.set('trust proxy', true)
+
 app.use(express.urlencoded());
 app.use(express.json());
 
+app.use(cookieSession({
+    signed: false,
+    secure: false
+}));
 
+app.use(currentUser);
 
-app.use(newPostRouter);
-app.use(deletePostRouter);
-app.use(updatePostRouter);
+app.use(signinRouter);
+app.use(signupRouter);
+app.use(currentUserRouter);
+app.use(signoutRouter);
+
+app.use(requireAuth, newPostRouter);
+app.use(requireAuth, deletePostRouter);
+app.use(requireAuth, updatePostRouter);
 app.use(getPostRouter);
 
-app.use(newCommentRouter);
-app.use(deleteCommentRouter);
+app.use(requireAuth, newCommentRouter);
+app.use(requireAuth, deleteCommentRouter);
 
 app.all('/{*splat}', (req: Request, res: Response, next: NextFunction) => {
 
@@ -66,6 +85,9 @@ app.use((error: CustomError, req: Request, res: Response, next: NextFunction) =>
 const start = () => {
     if (!process.env.MONGO_URI) {
         throw new Error("MONGO_URI is required!");
+    }
+    if (!process.env.JWT_KEY) {
+        throw new Error("JWT_KEY is required!");
     }
 
     try {
