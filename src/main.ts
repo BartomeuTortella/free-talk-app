@@ -17,7 +17,9 @@ import {
     signinRouter,
     signupRouter,
     currentUserRouter,
-    signoutRouter
+    signoutRouter,
+    deleteImagesRouter,
+    addImageRouter
 } from './routers/index.js';
 
 import { currentUser, errorHandler, NotFoundError, requireAuth } from '../common/index.js';
@@ -53,6 +55,9 @@ app.use(signoutRouter);
 app.use(requireAuth, newPostRouter);
 app.use(requireAuth, deletePostRouter);
 app.use(requireAuth, updatePostRouter);
+app.use(requireAuth, addImageRouter);
+app.use(requireAuth, deleteImagesRouter);
+
 app.use(getPostRouter);
 
 app.use(requireAuth, newCommentRouter);
