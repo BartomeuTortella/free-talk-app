@@ -4,12 +4,48 @@ dotenv.config();
 import express from "express";
 import mongoose from 'mongoose';
 import type { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 
+import {
+    newPostRouter,
+    deletePostRouter,
+    updatePostRouter,
+    getPostRouter,
+    newCommentRouter,
+    deleteCommentRouter
+} from './routers/index.js'
 
 const app = express();
 
+app.use(
+    cors(
+        {
+            origin: "*",
+            optionsSuccessStatus: 200
+        }
+    )
+);
+
 app.use(express.urlencoded());
 app.use(express.json());
+
+
+
+app.use(newPostRouter);
+app.use(deletePostRouter);
+app.use(updatePostRouter);
+app.use(getPostRouter);
+
+app.use(newCommentRouter);
+app.use(deleteCommentRouter);
+
+app.all('/{*splat}', (req: Request, res: Response, next: NextFunction) => {
+
+    const error = new Error('Not Found!') as CustomError;
+    error.status = 404;
+    next(error);
+
+});
 
 declare global {
     interface CustomError extends Error {

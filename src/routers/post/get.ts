@@ -16,13 +16,11 @@ router.get('/post/:id', async (req: Request, res: Response, next: NextFunction) 
     } catch (err) {
         const error = new Error('Post find failed') as CustomError;
         error.status = 500;
-        next(error);
+        return next(error);
     }
 
 
     res.status(200).send(foundPost);
-
-
 });
 
-export { router as deletePostRouter };
+export { router as getPostRouter };

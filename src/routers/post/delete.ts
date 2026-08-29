@@ -23,7 +23,7 @@ router.delete('/post/:id', async (req: Request, res: Response, next: NextFunctio
     } catch (err) {
         const error = new Error('Post delete failed') as CustomError;
         error.status = 500;
-        next(error);
+        return next(error);
     }
 
 

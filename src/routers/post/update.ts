@@ -30,7 +30,7 @@ router.put('/post/:id', async (req: Request, res: Response, next: NextFunction) 
     } catch (err) {
         const error = new Error('Post update failed') as CustomError;
         error.status = 500;
-        next(error);
+       return next(error);
     }
 
 
