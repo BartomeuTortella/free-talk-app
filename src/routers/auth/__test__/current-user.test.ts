@@ -12,7 +12,7 @@ it('Should return a current user property', async () => {
             .send()
             .expect(200);
 
-        expect(res.body.currentUser.email).toEqual('email@emial.com');
+        expect(res.body.currentUser.email).toEqual('email@email.com');
     }
 
 
