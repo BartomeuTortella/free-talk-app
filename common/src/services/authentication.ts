@@ -6,10 +6,10 @@ const scryptAsync = promisify(scrypt);
 export class Authentication {
     async pwsToHash(password: string) {
 
-        const salt = randomBytes(8).toHex();
+        const salt = randomBytes(8).toString('hex');
         const buf = (await scryptAsync(password, salt, 64)) as Buffer;
 
-        return `${buf.toHex()}.${salt}`
+        return `${buf.toString('hex')}.${salt}`
     }
 
     async pwdCompare(storedPassword: string, suppliedPassword: string) {

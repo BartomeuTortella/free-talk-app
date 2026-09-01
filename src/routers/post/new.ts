@@ -1,19 +1,26 @@
 import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import Post from '../../models/post.js';
-import { BadRequestError, uploadImages } from '../../../common/index.js';
+import { BadRequestError, uploadImages, validationRequest } from '../../../common/index.js';
 import User from '../../models/user.js';
 import fs from 'fs';
 import path from 'path';
+import { body } from 'express-validator';
 
 const router = Router();
 
-router.post('/post', uploadImages, async (req: Request, res: Response, next: NextFunction) => {
+router.post('/post', [
+    body('title')
+        .not().isEmpty()
+        .withMessage("Title must not be empty"),
+    body('content')
+        .not().isEmpty()
+        .withMessage('Content must not be empty')
+], validationRequest, uploadImages, async (req: Request, res: Response, next: NextFunction) => {
 
     const { title, content } = req.body;
 
     if (!req.files) return next(new BadRequestError("Images are required"));
-    if (!title || !content) return next(new BadRequestError('Title and content are required'));
 
     let images: Array<Express.Multer.File>;
 
